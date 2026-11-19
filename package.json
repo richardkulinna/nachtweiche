@@ -1,0 +1,50 @@
+{
+  "name": "nachtweiche",
+  "productName": "Nachtweiche",
+  "version": "1.0.0",
+  "description": "Ein nächtliches Stellwerk-Spiel für Windows",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win portable --x64 --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.9.0",
+    "electron-builder": "26.15.3"
+  },
+  "build": {
+    "appId": "art.kulinna.nachtweiche",
+    "electronVersion": "44.9.0",
+    "npmRebuild": false,
+    "electronFuses": {
+      "runAsNode": false,
+      "enableNodeOptionsEnvironmentVariable": false,
+      "enableNodeCliInspectArguments": false,
+      "enableEmbeddedAsarIntegrityValidation": true,
+      "onlyLoadAppFromAsar": true
+    },
+    "directories": {
+      "output": "Release"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "save-store.cjs",
+      "index.html",
+      "style.css",
+      "engine.js",
+      "scene.js",
+      "ui.js",
+      "sound.js",
+      "assets/**",
+      "build/icon.ico"
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": "portable",
+      "signExecutable": false,
+      "artifactName": "Nachtweiche.${ext}"
+    }
+  }
+}

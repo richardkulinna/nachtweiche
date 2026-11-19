@@ -1,0 +1,9 @@
+/Release/
+/release/
+/dist/
+/node_modules/
+/.qa/
+/test-results/
+/out/
+/build-output/
+*.log

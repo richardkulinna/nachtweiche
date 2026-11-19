@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#eeeae0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self' blob:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Nachtweiche</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="engine.js"></script>
+    <script defer src="scene.js"></script>
+    <script defer src="sound.js"></script>
+    <script defer src="assets/courses.js"></script>
+    <script defer src="assets/panels.js"></script>
+    <script defer src="ui.js"></script>
+  </head>
+  <body>
+    <header class="mast">
+      <button class="brand" data-tab="station" title="Zum Bahnhof" aria-label="Nachtweiche · Zum Bahnhof">
+        <svg viewBox="0 0 42 42" aria-hidden="true">
+          <rect width="42" height="42" rx="3" fill="currentColor" />
+          <g fill="none" stroke="var(--logo-fg)" stroke-width="3">
+            <path d="M7 32 21 8l14 24M12 25h19M11 32h21" />
+            <path d="m19 25 7-12" stroke="var(--logo-accent)" />
+          </g></svg
+        ><span>Nachtweiche</span>
+      </button>
+      <nav aria-label="Hauptnavigation" id="nav">
+        <button data-tab="network"><span>Liniennetz</span><b id="network-dot" hidden></b></button>
+        <button data-tab="journal"><span>Dienstbuch</span><b id="journal-dot" hidden></b></button>
+      </nav>
+      <div class="tools">
+        <button id="sound" hidden class="icon-button" aria-label="Ton umschalten" title="Ton umschalten">
+          <i data-icon="sound"></i></button
+        ><button id="settings" class="icon-button" aria-label="Einstellungen" title="Einstellungen">
+          <i data-icon="settings"></i>
+        </button>
+      </div>
+    </header>
+    <main>
+      <div class="station-layout" id="station-view">
+        <section class="station-column" aria-label="Bahnhof und Steuerung">
+          <div class="world">
+            <canvas
+              id="world"
+              aria-label="Bahnhof mit Drehtür. Ziehe Kreise um die Tür oder gib mit der Leertaste Schub."
+            ></canvas>
+            <div class="cash-readout" aria-label="Kasse und Einnahmen">
+              <div><strong id="money">8</strong> <span>M</span></div>
+              <small>+<span id="income">0</span> M/s</small>
+            </div>
+            <div class="scene-feedback" id="scene-feedback" aria-live="off"></div>
+            <div class="scene-hint" id="scene-hint">
+              <i data-icon="rotate"></i><span>Kreise um die Tür ziehen</span>
+            </div>
+          </div>
+          <div class="quiet-dock">
+            <div class="location">
+              <h1 id="place">Kesselplatz</h1>
+              <span id="line-plate"><span>Nachtbus</span></span
+              ><span class="quiet-dot">·</span><span id="shift-code">Schicht 1</span>
+            </div>
+            <div class="dock-actions">
+              <button id="spin" class="dock-action">
+                <i data-icon="rotate"></i><span>Anschub</span><kbd>␣</kbd>
+              </button>
+              <button id="signal" class="dock-action">
+                <i data-icon="signal"></i><span>Signal geben</span><kbd>F</kbd>
+              </button>
+              <button
+                id="show-shop"
+                aria-controls="workbench"
+                aria-expanded="false"
+                class="workshop-toggle"
+              >
+                <i data-icon="gear"></i><span>Werkstatt</span><kbd>W</kbd>
+              </button>
+            </div>
+          </div>
+        </section>
+        <dialog id="workbench" class="workbench">
+          <div class="bench-head">
+            <h2>Werkstatt</h2>
+            <span id="shop-cash"></span
+            ><button id="close-shop" class="icon-button" aria-label="Werkstatt schließen">
+              <i data-icon="close"></i>
+            </button>
+          </div>
+          <div class="bench-tabs" aria-label="Werkstattansicht">
+            <button data-bench="upgrades" class="selected">Ausbau</button
+            ><button data-bench="blades">Türflügel</button>
+            <div id="quantity" class="quantity" aria-label="Kaufmenge">
+              <button data-qty="1" class="selected">×1</button><button data-qty="10">×10</button
+              ><button data-qty="max">Max</button>
+            </div>
+          </div>
+          <div class="shop-list" id="shop-list"></div>
+          <button id="next-job" class="next-job">
+            <span
+              ><span class="eyebrow">NÄCHSTER AUFTRAG</span
+              ><strong id="job-name">Erste Schicht</strong></span
+            ><span id="job-progress"></span><i data-icon="arrow"></i>
+          </button>
+        </dialog>
+      </div>
+      <section id="network-view" class="page-view" hidden>
+        <div class="page-heading">
+          <div><h1>Liniennetz</h1></div>
+          <div class="segmented">
+            <button data-network="routes" class="selected">Strecken</button
+            ><button data-network="courses">Kurskarten</button
+            ><button data-network="prestige">Konzession</button>
+          </div>
+        </div>
+        <div id="network-content"></div>
+      </section>
+      <section id="journal-view" class="page-view" hidden>
+        <div class="page-heading">
+          <div><h1>Dienstbuch</h1></div>
+          <div class="segmented">
+            <button class="selected" data-journal="contracts">Aufträge</button
+            ><button data-journal="archive">Archiv</button>
+          </div>
+        </div>
+        <div id="journal-content"></div>
+      </section>
+    </main>
+    <div id="ticker" class="sr-only" aria-live="off"></div>
+    <dialog id="dialog">
+      <div class="dialog-head">
+        <h2 id="dialog-title"></h2>
+        <button class="icon-button" data-dialog-close aria-label="Schließen">
+          <i data-icon="close"></i>
+        </button>
+      </div>
+      <div id="dialog-body"></div>
+    </dialog>
+    <div id="toast" role="status"></div>
+  </body>
+</html>
